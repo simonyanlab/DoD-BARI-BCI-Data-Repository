@@ -1,0 +1,55 @@
+#!/usr/bin/env tcsh
+
+# Make sure datasets have been deobliqued:
+# 3dWarp -deoblique -prefix T1w_deobliqued.nii T1w_MPR_6.nii
+# for run in $(seq 1 6); do printf -v filename "ep2d_1p7_PAT2_%02d.nii" $((run+7)); 3dWarp -deoblique -prefix ep_0"$run"_deobliqued.nii.gz "$filename"; done
+
+set top_dir = ~/MRI_DATA/
+set results_dir = ~/RESULTS/
+set subjects = ( s102 s103 s104 s106 s107 s108 s109 s110 s111 s112 s113 s114 s115 s116 )
+set tpath = '/usr/local/AFNI'
+
+cd $results_dir
+
+foreach SUBJ ( $subjects )
+afni_proc.py -subj_id $SUBJ                                                            \
+        -script proc.$SUBJ -scr_overwrite                                              \
+        -blocks despike tshift align tlrc volreg blur mask scale regress               \
+        -copy_anat $top_dir/$SUBJ/T1w_deobliqued.nii                                   \
+        -tcat_remove_first_trs 2                                                       \
+        -dsets $top_dir/$SUBJ/ep_*_deobliqued.nii.gz                                   \
+        -volreg_align_to MIN_OUTLIER                                                   \
+        -volreg_align_e2a                                                              \
+        -volreg_tlrc_warp                                                              \
+        -tlrc_opts_at -init_xform AUTO_CENTER                                          \
+        -tshift_opts_ts -tpattern alt+z                                                \
+        -blur_size 4.0                                                                 \
+        -regress_stim_files                                                            \
+            $top_dir/$SUBJ/"$SUBJ"_correct_stim_file.1D                                \
+            $top_dir/$SUBJ/"$SUBJ"_incorrect_stim_file.1D                              \
+            $top_dir/$SUBJ/"$SUBJ"_confident_stim_file.1D                              \
+            $top_dir/$SUBJ/"$SUBJ"_notconfident_stim_file.1D                           \
+            $top_dir/$SUBJ/"$SUBJ"_trust_stim_file.1D                                  \
+            $top_dir/$SUBJ/"$SUBJ"_distrust_stim_file.1D                               \
+        -regress_stim_labels                                                           \
+            correct incorrect confident notconfident trust distrust                    \
+        -regress_basis_multi                                                           \
+            "BLOCK(1,1)"                                                               \
+            "BLOCK(1,1)"                                                               \
+            "BLOCK(2,1)"                                                               \
+            "BLOCK(2,1)"                                                               \
+            "BLOCK(2,1)"                                                               \
+            "BLOCK(2,1)"                                                               \
+        -regress_motion_per_run                                                        \
+        -regress_censor_motion 1                                                       \
+        -regress_censor_outliers 0.03                                                  \
+        -regress_opts_3dD                                                              \
+            -gltsym 'SYM: correct -incorrect' -glt_label 1 correct-incorrect           \
+            -gltsym 'SYM: confident -notconfident' -glt_label 2 confident-notconfident \
+            -gltsym 'SYM: trust -distrust' -glt_label 3 trust-distrust                 \
+            -jobs 8                                                                    \
+        -regress_make_ideal_sum sum_ideal.1D                                           \
+        -regress_est_blur_epits                                                        \
+        -regress_est_blur_errts                                                        \
+        -regress_run_clustsim no                                                       
+end

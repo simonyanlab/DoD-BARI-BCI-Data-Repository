@@ -1,0 +1,46 @@
+#!/bin/tcsh -xef
+
+# ---------------------- set process variables ----------------------
+
+set mask_dset = #Mask directory
+
+set dirA = #Results directory
+
+# specify and possibly create results directory
+set results_dir = test.results
+if ( ! -d $results_dir ) mkdir $results_dir
+
+# ------------------------- process the data -------------------------
+
+3dttest++ -Clustsim -prefix $results_dir/correct_vs_incorrect -AminusB -paired \
+          -mask $mask_dset                                           \
+          -setA correct                                              \
+             02 "$dirA/s102.results/stats.s102+tlrc[1]"              \
+             03 "$dirA/s103.results/stats.s103+tlrc[1]"              \
+             04 "$dirA/s104.results/stats.s104+tlrc[1]"              \
+             06 "$dirA/s106.results/stats.s106+tlrc[1]"              \
+             #07 "$dirA/s107.results/stats.s107+tlrc[1]"              \
+             08 "$dirA/s108.results/stats.s108+tlrc[1]"              \
+             09 "$dirA/s109.results/stats.s109+tlrc[1]"              \
+             10 "$dirA/s110.results/stats.s110+tlrc[1]"              \
+             11 "$dirA/s111.results/stats.s111+tlrc[1]"              \
+             12 "$dirA/s112.results/stats.s112+tlrc[1]"              \
+             13 "$dirA/s113.results/stats.s113+tlrc[1]"              \
+             14 "$dirA/s114.results/stats.s114+tlrc[1]"              \
+             15 "$dirA/s115.results/stats.s115+tlrc[1]"              \
+             16 "$dirA/s116.results/stats.s116+tlrc[1]"              \
+          -setB incorrect                                            \
+             02 "$dirA/s102.results/stats.s102+tlrc[4]"              \
+             03 "$dirA/s103.results/stats.s103+tlrc[4]"              \
+             04 "$dirA/s104.results/stats.s104+tlrc[4]"              \
+             06 "$dirA/s106.results/stats.s106+tlrc[4]"              \
+             #07 "$dirA/s107.results/stats.s107+tlrc[4]"              \
+             08 "$dirA/s108.results/stats.s108+tlrc[4]"              \
+             09 "$dirA/s109.results/stats.s109+tlrc[4]"              \
+             10 "$dirA/s110.results/stats.s110+tlrc[4]"              \
+             11 "$dirA/s111.results/stats.s111+tlrc[4]"              \
+             12 "$dirA/s112.results/stats.s112+tlrc[4]"              \
+             13 "$dirA/s113.results/stats.s113+tlrc[4]"              \
+             14 "$dirA/s114.results/stats.s114+tlrc[4]"              \
+             15 "$dirA/s115.results/stats.s115+tlrc[4]"              \
+             16 "$dirA/s116.results/stats.s116+tlrc[4]"
