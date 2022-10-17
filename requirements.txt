@@ -1,0 +1,10 @@
+jupyterlab==3.4.8
+matplotlib==3.6.1
+pandas==1.5.0
+numpy==1.23.4
+scipy==1.9.2
+seaborn==0.12.0
+pingouin==0.5.2
+scikit-learn==1.0.2
+mne==1.2.0
+cBCI==0.1.0
